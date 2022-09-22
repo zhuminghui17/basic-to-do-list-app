@@ -1,0 +1,5 @@
+node_modules
+data*.json
+todo*.json
+*-grade.yml.old*
+git-log-summary.txt
