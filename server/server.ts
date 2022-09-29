@@ -47,9 +47,9 @@ app.post("/list", (req, res) => { // create a new list
 })
  
 
-app.post("/list/:listId/:items", (req, res) => {
+app.post("/list/:listId/:item", (req, res) => {
   const list = lists[req.params.listId]
-  const items = list[req.params.items] // error need modify
+  const items = list[req.params.item] // error need modify
   if (!list) {
     res.status(404).json({ status: "error" })
     return
@@ -73,6 +73,32 @@ app.put("/list/:listId/items/:item", (req, res) => {
     return
   }
   list.add(req.params.item)
+  res.status(200).json({ status: "ok", count: list.size })
+})
+
+// Q6 Implement the DELETE /api/list/<<list ID>> 
+app.delete("/list/:listId/", (req, res) => {
+  const list = lists[req.params.listId]
+  if (!list) {
+    res.status(404).json({ status: "error" })
+    return
+  }
+  //list.xxx() will call a new function 
+  res.status(200).json({ status: "ok", count: list.size })
+})
+
+// Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
+app.delete("/list/:listId/item/:item", (req, res) => {
+  const list = lists[req.params.listId]
+  if (!list) {
+    res.status(404).json({ status: "error" })
+    return
+  }
+  if (!req.params.item) {
+    res.status(400).json({ status: "error" })
+    return
+  }
+  // list.xx() call a new function
   res.status(200).json({ status: "ok", count: list.size })
 })
 
