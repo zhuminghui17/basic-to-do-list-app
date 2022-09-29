@@ -1,3 +1,5 @@
+import fs from "fs" // import
+
 export type Id = string
 
 export interface TodoList {
@@ -71,3 +73,13 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
 	})
   return itemsUpdated
 }
+
+export function load() {
+	todoLists = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8"))
+	idCount = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8")) 
+  }
+  
+export function save() {
+	fs.writeFileSync("todo-list-data.json", JSON.stringify(todoLists, null, 2))
+	fs.writeFileSync("todo-list-data.json", JSON.stringify(idCount, null, 2))	
+  }	
