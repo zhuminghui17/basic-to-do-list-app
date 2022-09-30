@@ -83,9 +83,8 @@ app.put('/api/list/:listId/item/:itemId', (req, res) => {
 
 // Q6 Implement the DELETE /api/list/<<list ID>> 
 app.delete("/api/list/:listId/", (req, res) => {
-    let listId:string = req.params.listId 
-    let delete:Partial<TodoList> = { ...req.body }
-    let delete_n:number = deleteList(xx,xx) // will implement deleteList() in serverData
+    let listId:string = req.params.listId
+    let delete_n:number = deleteList(listId) // will implement deleteList() in serverData
     if (delete_n === 0) { // equal !list 
       res.status(404).json({ status: "error" })
       return
@@ -99,8 +98,7 @@ app.delete("/api/list/:listId/", (req, res) => {
 app.delete("/api/list/:listId/item/:item", (req, res) => {
     let listId:string = req.params.listId
     let itemId:string = req.params.itemId
-    let deleteItem:Partial<TodoItem> = { ...req.body } 
-    let delete_item_n:number = deleteItemFromList(listId, itemId, deleteItem) // will implement deleteItemFromList() in serverData
+    let delete_item_n:number = deleteItemFromList(listId, itemId) // will implement deleteItemFromList() in serverData
     if (delete_item_n === 0) {  // if list not exist, deleteItemFromList() return 0
       res.status(404).json({ status: "error" }) // here return 404
       return
@@ -108,9 +106,9 @@ app.delete("/api/list/:listId/item/:item", (req, res) => {
     else {
       res.status(200).json({ status: 'ok' }) 
     }
-}    
+})    
 
-    // start server
+// start server
 app.listen(port, () => {
       console.log(`To-do list server listening on port ${port}`)
     })
