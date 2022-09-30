@@ -2,15 +2,16 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
+import { getLists, getList, load, card2Quiz, TodoList } from './serverData'
 
 // data managed by server
 type listName = string
 type listId = string
 type listSet = Set<listName>
 const lists: Record<listId, listSet> = {}
-let listCount = 0
+let idCount = 0
 function nextListId() {
-  return String(listCount++)
+  return String(idCount++)
 }
 
 // set up Express
@@ -27,28 +28,30 @@ const logger = pino({
 app.use(expressPinoLogger({ logger }))
 
 // app routes
-app.get("/lists", (req, res) => {
-  res.status(200).json(Object.keys(lists)) // return all the objects in lists as an array
+app.get("/api/lists", (req, res) => {
+  res.status(200).json(getLists()) // return all the objects in lists as an array
 })
 
-app.get("/list/:listId/:items", (req, res) => { // get by a specific id 
-  const list = lists[req.params.listId] 
+app.get("/api/list/:listId/items", (req, res) => { // get by a specific id 
+  const list:TodoList = getList(req.params.listId)
   if (!list) { // if list not exist
     res.status(404).json({ status: "error" }) // return 404 and error
     return
   }
-  res.status(200).json([...list]) // success get
+  res.status(200).json(getList(req.params.listId)) // success get
 })
 
-app.post("/list", (req, res) => { // create a new list
+
+app.post("/api/list", (req, res) => { // create a new list
   const listId = nextListId() // create a list id
   lists[listId] = new Set<string>()
   res.status(200).json({ listId })
 })
  
 
-app.post("/list/:listId/:item", (req, res) => {
-  const list = lists[req.params.listId]
+app.post("/list/:listId/item", (req, res) => {
+  const list:TodoList = getList(req.params.listId)
+  const list:
   const items = list[req.params.item] // error need modify
   if (!list) {
     res.status(404).json({ status: "error" })
@@ -60,7 +63,6 @@ app.post("/list/:listId/:item", (req, res) => {
   }
   res.status(200).json([...items])
 })
-
 
 app.put("/list/:listId/items/:item", (req, res) => {
   const list = lists[req.params.listId]
