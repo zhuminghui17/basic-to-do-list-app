@@ -2,7 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
-import { Id, nextId, TodoItem, getLists, getList, addList, addItemToList, TodoList } from './serverData'
+import { Id, nextId, TodoItem, getLists, getList, addList, addItemToList, updateItemOnList,TodoList } from './serverData'
 
 // data managed by server
 type listName = string
@@ -25,12 +25,12 @@ const logger = pino({
 app.use(expressPinoLogger({ logger }))
 
 // app routes
-// Q3-1
+// Q4-1
 app.get("/api/lists", (req, res) => {
   res.status(200).json(getLists()) 
 })
 
-// Q3-2
+// Q4-2
 app.get("/api/list/:listId/items", (req, res) => { // get by a specific id 
   const list:TodoList = getList(req.params.listId)
   if (!list) { // if list not exist
@@ -40,18 +40,19 @@ app.get("/api/list/:listId/items", (req, res) => { // get by a specific id
   res.status(200).json(getList(req.params.listId)) // success get
 })
 
-// Q3-3
+// Q4-3
 app.post("/api/list", (req, res) => { // create a new todo list
   if (typeof req.body.name === "string") { // validate types
     let newId:string = addList(req.body.name);  // add name and return new id
     res.status(200).json({ status: "ok", id: newId }) // ok: return newId
   } else {
     res.status(400).json({ status: "error" }) // types error: return 400
+    return
   }
 })
  
-// Q3-4
-app.post("/list/:listId/item", (req, res) => {
+// Q4-4
+app.post("/api/list/:listId/item", (req, res) => {
   // first validate types
   if (typeof req.body?.completed === "boolean" // follow instruction
       && typeof req.body?.description === "string"
@@ -62,52 +63,55 @@ app.post("/list/:listId/item", (req, res) => {
       }
       else{
         res.status(400).json({ status: "error" }) // type error: return 400
+        return
 }
 })
 
-
-app.put("/list/:listId/items/:item", (req, res) => {
-  const list = lists[req.params.listId]
-  if (!list) {
-    res.status(404).json({ status: "error" })
-    return
-  }
-  if (!req.params.item) {
-    res.status(400).json({ status: "error" })
-    return
-  }
-  list.add(req.params.item)
-  res.status(200).json({ status: "ok", count: list.size })
-})
-
-// Q6 Implement the DELETE /api/list/<<list ID>> 
-app.delete("/list/:listId/", (req, res) => {
-  const list = lists[req.params.listId]
-  if (!list) {
-    res.status(404).json({ status: "error" })
-    return
-  }
-  //list.xxx() will call a new function 
-  res.status(200).json({ status: "ok", count: list.size })
-})
-
-// Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
-app.delete("/list/:listId/item/:item", (req, res) => {
-  const list = lists[req.params.listId]
-  if (!list) {
-    res.status(404).json({ status: "error" })
-    return
-  }
-  if (!req.params.item) {
-    res.status(400).json({ status: "error" })
-    return
-  }
-  // list.xx() call a new function
-  res.status(200).json({ status: "ok", count: list.size })
-})
+// Q5 
+app.put('/api/list/:listId/item/:itemId', (req, res) => {
+    let listId:string = req.params.listId
+    let itemId:string = req.params.itemId
+    let update:Partial<TodoItem> = { ...req.body }
+    let update_n:number = updateItemOnList(listId, itemId, update) // updateItemOnList return the number of items updated
+    if (update_n == 0) {  // if list not exist, updateItemOnList return 0
+      res.status(404).json({ status: "error" }) // here return 404
+      return
+    }
+    else {
+      res.status(200).json({ status: 'ok' }) 
+    }
 
 
-// start server
-app.listen(port, () => {
-  console.log(`To-do list server listening on port ${port}`)
-})
+
+    // Q6 Implement the DELETE /api/list/<<list ID>> 
+    app.delete("/list/:listId/", (req, res) => {
+      const list = lists[req.params.listId]
+      if (!list) {
+        res.status(404).json({ status: "error" })
+        return
+      }
+      //list.xxx() will call a new function 
+      res.status(200).json({ status: "ok", count: list.size })
+    })
+
+    // Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
+    app.delete("/list/:listId/item/:item", (req, res) => {
+      const list = lists[req.params.listId]
+      if (!list) {
+        res.status(404).json({ status: "error" })
+        return
+      }
+      if (!req.params.item) {
+        res.status(400).json({ status: "error" })
+        return
+      }
+      // list.xx() call a new function
+      res.status(200).json({ status: "ok", count: list.size })
+    })
+
+
+    // start server
+    app.listen(port, () => {
+      console.log(`To-do list server listening on port ${port}`)
+    })
+  }
