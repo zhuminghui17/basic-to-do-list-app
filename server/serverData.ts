@@ -80,26 +80,28 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
   return itemsUpdated // return a number
 }
 
+// for Q6
 export function deleteList(listId: Id): number {
 	const list_target = getList(listId)
-	if (!list_target) {
+	if (!list_target) { // list_target
 	  return 0
 	} else {
 	todoLists = todoLists.filter(TodoList => TodoList !== list_target) // delete target list from todoLists
-	return 200 // success 	
+	return 200 // successfully delete
 	}
   }
 
-  export function deleteItemFromList(listId: Id, itemId: Id): number {
-	const list_target = getList(listId)
-	if (!list_target) {
-	  return 0
-	} else {
-	list_target.items = list_target.items.filter(l => l.id !== itemId) // // delete item from list_target
+// for Q7
+export function deleteItemFromList(listId: Id, itemId: Id): number {
+  const list_target = getList(listId) 
+  if (!list_target) {
+    return 0
+  } else {
+  list_target.items = list_target.items.filter(l => l.id !== itemId) // // delete item from list_target
 	// need to modify the todoList
-	return 200 // success 	
-	}
-  } 
+  return 200 // success 	
+  }
+} 
 
 export function load() {
 	try { 
@@ -110,7 +112,6 @@ export function load() {
 		console.log("error")
 	}
 }
-
 
 export function save() {
 	let todoListData:TodoListData = {
