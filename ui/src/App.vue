@@ -106,6 +106,7 @@ function refreshLists() {
     selectedList.value = null
   }
 }
+
 onMounted(refreshLists)
 
 function selectList(listId: Id) {
@@ -124,7 +125,7 @@ function handleClickAddList() {
 }
 
 function refreshSelectedList() {
-  if (selectedList.value === null) {
+  if (selectedList.value == null) {
     return
   }
   getList(selectedList.value.id).then((value) =>{
@@ -154,7 +155,7 @@ function checkItem(itemId: Id, completed: boolean) {
   refreshSelectedList()
 }
 
-function handleDeleteLists(listId: Id){w
+function handleDeleteLists(listId: Id){
   deleteList(listId).then(() =>{
     if (selectedList.value?.id == listId){
       refreshSelectedList()
@@ -163,7 +164,7 @@ function handleDeleteLists(listId: Id){w
   )
 }
 
-function handleDeleteItem(listId:Id,itemId:Id){
+function handleDeleteItem(listId: Id,itemId:Id){
   deleteItemFromList(listId,itemId).then(()=>{
     refreshSelectedList()
   })
