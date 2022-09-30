@@ -2,17 +2,14 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
-import { getLists, getList, load, card2Quiz, TodoList } from './serverData'
+import { nextId, getLists, getList, addList, TodoList } from './serverData'
 
 // data managed by server
 type listName = string
 type listId = string
 type listSet = Set<listName>
 const lists: Record<listId, listSet> = {}
-let idCount = 0
-function nextListId() {
-  return String(idCount++)
-}
+
 
 // set up Express
 const app = express()
@@ -28,10 +25,12 @@ const logger = pino({
 app.use(expressPinoLogger({ logger }))
 
 // app routes
+// Q3-1
 app.get("/api/lists", (req, res) => {
-  res.status(200).json(getLists()) // return all the objects in lists as an array
+  res.status(200).json(getLists()) 
 })
 
+// Q3-2
 app.get("/api/list/:listId/items", (req, res) => { // get by a specific id 
   const list:TodoList = getList(req.params.listId)
   if (!list) { // if list not exist
@@ -41,11 +40,14 @@ app.get("/api/list/:listId/items", (req, res) => { // get by a specific id
   res.status(200).json(getList(req.params.listId)) // success get
 })
 
-
-app.post("/api/list", (req, res) => { // create a new list
-  const listId = nextListId() // create a list id
-  lists[listId] = new Set<string>()
-  res.status(200).json({ listId })
+// Q3-3
+app.post("/api/list", (req, res) => { // create a new todo list
+  if (typeof req.body.name === "string") { // validate types
+    let newId:string = addList(req.body.name);  // add name and return new id
+    res.status(200).json({ status: "ok", id: newId }) // ok: return newId
+  } else {
+    res.status(400).json({ status: "error" }) // types error: return 400
+  }
 })
  
 
