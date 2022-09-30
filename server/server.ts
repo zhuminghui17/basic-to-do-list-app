@@ -2,15 +2,9 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
-import { Id, nextId, TodoItem, getLists, getList, addList, addItemToList, updateItemOnList, deleteList, 
+import { Id, nextId, TodoItem, 
+  getLists, getList, addList, addItemToList, updateItemOnList, deleteList, 
   deleteItemFromList, TodoList } from './serverData'
-
-// data managed by server
-type listName = string
-type listId = string
-type listSet = Set<listName>
-const lists: Record<listId, listSet> = {}
-
 
 // set up Express
 const app = express()
@@ -34,11 +28,11 @@ app.get("/api/lists", (req, res) => {
 // Q4-2
 app.get("/api/list/:listId/items", (req, res) => { // get by a specific id 
   const list:TodoList = getList(req.params.listId)
-  if (!list) { // if list not exist
-    res.status(404).json({ status: "error" }) // return 404 and error
+  if (!list) { // if list not exist (is null)
+    res.status(404).json({ status: "error, listId does not exist." }) // return 404 and error
     return
   }
-  res.status(200).json(getList(req.params.listId)) // success get
+  res.status(200).json(getList(req.params.listId).items) // success get the items
 })
 
 // Q4-3
@@ -47,7 +41,7 @@ app.post("/api/list", (req, res) => { // create a new todo list
     let newId:string = addList(req.body.name);  // add name and return new id
     res.status(200).json({ status: "ok", id: newId }) // ok: return newId
   } else {
-    res.status(400).json({ status: "error" }) // types error: return 400
+    res.status(400).json({ status: "error, the request was malformed." }) // types error: return 400
     return
   }
 })
@@ -60,10 +54,14 @@ app.post("/api/list/:listId/item", (req, res) => {
       && req.body.priority in ['1','2','3']){
         let item:Omit<TodoItem, "id"> = {...req.body} // define item as type for addItemToList()
         let newId:string = addItemToList(req.params.listId, item)  // input Id and item
-        res.status(200).json({ status: "ok" }) // ok: return 200
+        if (newId === null) { // 
+          res.status(404).json({status: "error, listId does not exist."})
+        } else {
+          res.status(200).json({ status: "ok" }) // ok: return 200
+        }
       }
       else{
-        res.status(400).json({ status: "error" }) // type error: return 400
+        res.status(400).json({ status: "error, the request was malformed." }) // type error: return 400
         return
 }
 })
@@ -97,19 +95,19 @@ app.delete("/api/list/:listId/", (req, res) => {
     }
   })
 
-// Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
-app.delete("/api/list/:listId/item/:item", (req, res) => {
-    let listId:string = req.params.listId
-    let itemId:string = req.params.itemId
-    let delete_item_n:number = deleteItemFromList(listId, itemId) // will implement deleteItemFromList() in serverData
-    if (delete_item_n === 0) {  // if list not exist, deleteItemFromList() return 0
-      res.status(404).json({ status: "error" }) // here return 404
-      return
-    }
-    else {
-      res.status(200).json({ status: 'ok' }) 
-    }
-})    
+// // Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
+// app.delete("/api/list/:listId/item/:item", (req, res) => {
+//     let listId:string = req.params.listId
+//     let itemId:string = req.params.itemId
+//     let delete_item_n:number = deleteItemFromList(listId, itemId) // will implement deleteItemFromList() in serverData
+//     if (delete_item_n === 0) {  // if list not exist, deleteItemFromList() return 0
+//       res.status(404).json({ status: "error" }) // here return 404
+//       return
+//     }
+//     else {
+//       res.status(200).json({ status: 'ok' }) 
+//     }
+// })    
 
 // start server
 app.listen(port, () => {
