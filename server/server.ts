@@ -2,7 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
-import { nextId, getLists, getList, addList, TodoList } from './serverData'
+import { Id, nextId, TodoItem, getLists, getList, addList, addItemToList, TodoList } from './serverData'
 
 // data managed by server
 type listName = string
@@ -50,21 +50,21 @@ app.post("/api/list", (req, res) => { // create a new todo list
   }
 })
  
-
+// Q3-4
 app.post("/list/:listId/item", (req, res) => {
-  const list:TodoList = getList(req.params.listId)
-  const list:
-  const items = list[req.params.item] // error need modify
-  if (!list) {
-    res.status(404).json({ status: "error" })
-    return
-  }
-  if (!req.params.items) {
-    res.status(400).json({ status: "error" })
-    return
-  }
-  res.status(200).json([...items])
+  // first validate types
+  if (typeof req.body?.completed === "boolean" // follow instruction
+      && typeof req.body?.description === "string"
+      && req.body.priority in ['1','2','3']){
+        let item:Omit<TodoItem, "id"> = {...req.body} // define item as type for addItemToList()
+        let newId:string = addItemToList(req.params.listId, item)  // input Id and item
+        res.status(200).json({ status: "ok" }) // ok: return 200
+      }
+      else{
+        res.status(400).json({ status: "error" }) // type error: return 400
+}
 })
+
 
 app.put("/list/:listId/items/:item", (req, res) => {
   const list = lists[req.params.listId]
