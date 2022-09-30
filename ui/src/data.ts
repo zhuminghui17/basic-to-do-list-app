@@ -33,8 +33,8 @@ function nextId(): Id {
 // Q8-1
 export async function getLists(): Promise<TodoListBasicInfo[]> {
 	return fetch('/api/lists')
-	.then((response) => {
-		return response.json()
+	.then((res) => {
+		return res.json()
 	}).then((data: TodoListBasicInfo[]) => {
 		return data
 	})
@@ -43,8 +43,8 @@ export async function getLists(): Promise<TodoListBasicInfo[]> {
 // Q8-2
 export async function getList(): Promise<TodoList | null> {
 	return fetch('/api/list/${encodeURIComponent(listId)}/items')
-	.then((response) => {
-		return response.json()
+	.then((res) => {
+		return res.json()
 	}).then((data: TodoList | null) => {
 		return data
 	})
@@ -52,19 +52,19 @@ export async function getList(): Promise<TodoList | null> {
 
 // Q8-3
 export async function addList(name: string): Promise<Id> {
-	return fetch(
-		'/api/list', 
+	const response = await fetch('/api/list', 
 		{
 			method: 'POST',
 			headers: {"Content-Type": "application/json"},
 			body: JSON.stringify({name: name})
 			})
-			.then((response) => response.json())
-			.then((data) => data.id)
+
+			const data = await response.json()
+			return data.id
 }
 
 export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Promise<Id | null> {
-	return fetch(
+		const response = await fetch(
 		'api/list/${encodeURIComponent(listId)}/items', 
 		{
 			method: 'POST',
@@ -72,29 +72,26 @@ export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Pro
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				description: item.description,
-				completed: item.completed,
-				priority: item.priority
+				...item
 			})
 		})
-		.then((response) => response.json())
-		.then((data) => data.id)
+		
+		const data = await response.json()
+		return data.id
 }
 
-export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoItem>): number {
-	const list = getList(listId)
-	if (!list) {
-		return 0
-	}
 
-  let itemsUpdated = 0
-	list.items = list.items.map(x => {
-		if (x.id === itemId) {
-      ++itemsUpdated
-			return { ...x, ...update }
-		} else {
-			return x
-		}
-	})
-  return itemsUpdated
+export async function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoItem>): Promise<number> {
+		const response = await fetch(
+		'api/list/${encodeURIComponent(listId)}/item/${encodeURIComponent(itemId)}', 
+		{
+			method: 'PUT',
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({...update})
+		})
+		const data = await response.json()
+		return data.count
 }
+
