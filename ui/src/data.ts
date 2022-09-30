@@ -55,7 +55,9 @@ export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Pro
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify((
-			{...item}
+			{description: item.description,
+				priority: item.priority,
+				completed: item.completed}
 		)),
 		method: "POST"
 	})
@@ -78,13 +80,13 @@ export async function updateItemOnList(listId: Id, itemId: Id, update: Partial<T
 }
 
 export async function deleteList(listId:Id): Promise<number> {
-		const response = await fetch('api/list/${encodeURIComponent(listId)}',{method: "DELETE"})
+		let response = await fetch('api/list/${encodeURIComponent(listId)}',{method: "DELETE"})
 		const data = await response.json()
 		return data.count
 }
 
 export async function deleteItemFromList(listId: Id, itemId: Id): Promise<number>{
-	const response = await fetch('/api/list/${encodeURIComponent(listId)}/item/${encodeURIComponent(itemId)}',{method:"DELETE"})
+	let response = await fetch('/api/list/${encodeURIComponent(listId)}/item/${encodeURIComponent(itemId)}',{method:"DELETE"})
 	const data = await response.json()
 	return data.count
 }

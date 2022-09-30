@@ -22,8 +22,12 @@
                 :class="{ 'font-weight-bold': selectedList?.id === list.id }"
               >
                 <span @click="selectList(list.id)" title="list.id">{{ list.name }}</span>
-                <b-badge variant="dark" pill>{{ list.count }}</b-badge>
-                <b-button variant="success" @click="callStep6">Delete</b-button>
+                <b-row>
+                  <b-col>
+                    <b-badge variant="dark" pill>{{ list.count }}</b-badge>
+                  </b-col>
+                  <b-button variant="success" size="sm" @click="handleDeleteLists(list.id)">Delete</b-button>
+                </b-row>
               </b-list-group-item>
               <b-list-group-item>
                 <b-input-group>
@@ -57,8 +61,14 @@
                   <b-form-checkbox class="d-inline-block" @input="checkItem(item.id, $event)" :checked="item.completed" />
                   {{ item.description }}
                 </span>
+                <b-row>
+                  <b-col>
+                    <b-badge variant="dark" pill>{{ item.priority }}</b-badge>
+                  </b-col>
+                  <b-button variant="success" size="sm" @click="handleDeleteItem(selectedList.id,item.id)">Delete</b-button>
+                </b-row>
                 <b-badge variant="secondary">{{ item.priority }}</b-badge>
-                <b-button variant="success" @click="callStep7">Delete</b-button>
+                <b-button variant="success" @click="handleDeleteItem">Delete</b-button>
               </b-list-group-item>
               <b-list-group-item v-if="selectedList != null">
                 <b-input-group>
@@ -78,7 +88,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, Ref } from 'vue'
-import { TodoItem, TodoList, TodoListBasicInfo, Id, getLists, addList, getList, addItemToList, updateItemOnList } from './data'
+import { TodoItem, TodoList, TodoListBasicInfo, Id, getLists, addList, getList, addItemToList, updateItemOnList, deleteList, deleteItemFromList } from './data'
 
 const lists: Ref<TodoListBasicInfo[]> = ref([])
 const nameOfListToCreate = ref("")
@@ -87,7 +97,11 @@ const selectedList: Ref<null | TodoList> = ref(null)
 const descriptionOfItemToAdd = ref("")
 
 function refreshLists() {
-  lists.value = getLists()
+  getLists().then(
+      function (value){
+        lists.value = value
+      }
+  )
   if (selectedList.value && !lists.value.find(l => l.id === selectedList.value!.id)) {
     selectedList.value = null
   }
@@ -95,21 +109,27 @@ function refreshLists() {
 onMounted(refreshLists)
 
 function selectList(listId: Id) {
-  selectedList.value = getList(listId)
+  getList(listId).then((value) => {
+    selectedList.value = value
+      }
+  )
 }
 
 function handleClickAddList() {
-  const id = addList(nameOfListToCreate.value)
-  nameOfListToCreate.value = ""
-  refreshLists()
-  selectList(id)
+  addList(nameOfListToCreate.value).then((id) =>{
+    nameOfListToCreate.value = ""
+    refreshLists()
+    selectList(id)}
+  )
 }
 
 function refreshSelectedList() {
-  if (selectedList.value == null) {
+  if (selectedList.value === null) {
     return
   }
-  selectedList.value = getList(selectedList.value.id)
+  getList(selectedList.value.id).then((value) =>{
+    selectedList.value = value
+  })
 }
 
 function handleClickAddItem() {
@@ -132,5 +152,20 @@ function handleClickAddItem() {
 function checkItem(itemId: Id, completed: boolean) {
   updateItemOnList(selectedList.value!.id, itemId, { completed })
   refreshSelectedList()
+}
+
+function handleDeleteLists(listId: Id){w
+  deleteList(listId).then(() =>{
+    if (selectedList.value?.id == listId){
+      refreshSelectedList()
+    }
+    refreshLists()}
+  )
+}
+
+function handleDeleteItem(listId:Id,itemId:Id){
+  deleteItemFromList(listId,itemId).then(()=>{
+    refreshSelectedList()
+  })
 }
 </script>
