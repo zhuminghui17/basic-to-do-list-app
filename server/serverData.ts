@@ -82,24 +82,14 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
 
 // for Q6
 export function deleteList(listId: Id): number {
-	// const list_target = getList(listId)
-	// if (!list_target) { // list_target
-	//   return 0
-	// } else {
-	// todoLists = todoLists.filter(TodoList => TodoList !== list_target) // delete target list from todoLists
-	// return 200 // successfully delete
-	// }
-	const list = getList(listId)
-	if (!list) {
-		return 0;
+	const list_target = getList(listId)
+	if (!list_target) { // list_target
+	  return 0
+	} else {
+	todoLists = todoLists.filter(TodoList => TodoList !== list_target) // delete target list from todoLists
+	return 200 // successfully delete
 	}
-	else{
-		let index:number = todoLists.indexOf(list);
-		todoLists.splice(index,1);
-		return 1;
-	}
-  }
-  
+
 
 // for Q7
 export function deleteItemFromList(listId: Id, itemId: Id): number {
