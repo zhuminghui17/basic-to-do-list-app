@@ -23,6 +23,7 @@
               >
                 <span @click="selectList(list.id)" title="list.id">{{ list.name }}</span>
                 <b-badge variant="dark" pill>{{ list.count }}</b-badge>
+                <b-button variant="success" @click="callStep6">Delete</b-button>
               </b-list-group-item>
               <b-list-group-item>
                 <b-input-group>
@@ -57,6 +58,7 @@
                   {{ item.description }}
                 </span>
                 <b-badge variant="secondary">{{ item.priority }}</b-badge>
+                <b-button variant="success" @click="callStep7">Delete</b-button>
               </b-list-group-item>
               <b-list-group-item v-if="selectedList != null">
                 <b-input-group>

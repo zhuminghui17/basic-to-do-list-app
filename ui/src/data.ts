@@ -30,28 +30,55 @@ function nextId(): Id {
 	return String(idCount++)
 }
 
-export function getLists(): TodoListBasicInfo[] {
-	return todoLists.map(({ id, name, items }) => ({ id, name, count: items.length }))
+// Q8-1
+export async function getLists(): Promise<TodoListBasicInfo[]> {
+	return fetch('/api/lists')
+	.then((response) => {
+		return response.json()
+	}).then((data: TodoListBasicInfo[]) => {
+		return data
+	})
 }
 
-export function getList(listId: Id): TodoList | null {
-	return todoLists.filter(l => l.id === listId)[0] || null
+// Q8-2
+export async function getList(): Promise<TodoList | null> {
+	return fetch('/api/list/${encodeURIComponent(listId)}/items')
+	.then((response) => {
+		return response.json()
+	}).then((data: TodoList | null) => {
+		return data
+	})
 }
 
-export function addList(name: string): Id {
-	const newList: TodoList = { id: nextId(), name, items: [] }
-	todoLists.push(newList)
-	return newList.id
+// Q8-3
+export async function addList(name: string): Promise<Id> {
+	return fetch(
+		'/api/list', 
+		{
+			method: 'POST',
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify({name: name})
+			})
+			.then((response) => response.json())
+			.then((data) => data.id)
 }
 
-export function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Id | null {
-  const list = getList(listId)
-  if (!list) {
-    return null
-  }
-	const id = nextId()
-	list.items?.push({ ...item, id })
-	return id
+export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Promise<Id | null> {
+	return fetch(
+		'api/list/${encodeURIComponent(listId)}/items', 
+		{
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				description: item.description,
+				completed: item.completed,
+				priority: item.priority
+			})
+		})
+		.then((response) => response.json())
+		.then((data) => data.id)
 }
 
 export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoItem>): number {
