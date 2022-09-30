@@ -73,7 +73,7 @@ app.put('/api/list/:listId/item/:itemId', (req, res) => {
     let update:Partial<TodoItem> = { ...req.body }
     let update_n:number = updateItemOnList(listId, itemId, update) // updateItemOnList return the number of items updated
     if (update_n === 0) {  // if list not exist, updateItemOnList return 0
-      res.status(404).json({ status: "error" }) // here return 404
+      res.status(404).json({ status: "error, listId does not exist." }) // here return 404
       return
     }
     else {

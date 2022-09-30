@@ -28,6 +28,12 @@ let todoLists: TodoList[] = [
 
 let idCount = 0
 
+export interface TodoListData { // for Q3
+	todoLists: TodoList[]
+	idCount: number
+}
+
+
 export function nextId(): Id { // modify to export
 	return String(idCount++)
 }
@@ -65,13 +71,13 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
   let itemsUpdated = 0
 	list.items = list.items.map(x => {
 		if (x.id === itemId) {
-      ++itemsUpdated
-			return { ...x, ...update }
+      ++itemsUpdated 
+			return { ...x, ...update } // update
 		} else {
-			return x
+			return x // keep the same
 		}
 	})
-  return itemsUpdated
+  return itemsUpdated // return a number
 }
 
 export function deleteList(listId: Id): number {
@@ -97,8 +103,9 @@ export function deleteList(listId: Id): number {
 
 export function load() {
 	try { 
-		todoLists = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8")),
-		idCount = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8")) 
+		let todoListData = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8"))
+		todoLists = todoListData.todoLists
+		idCount = todoListData.idCount
 	} catch (error) {
 		console.log("error")
 	}
@@ -106,6 +113,9 @@ export function load() {
 
 
 export function save() {
-	fs.writeFileSync("todo-list-data.json", JSON.stringify(todoLists, null, 2)),
-	fs.writeFileSync("todo-list-data.json", JSON.stringify(idCount, null, 2))	
+	let todoListData:TodoListData = {
+		todoLists: todoLists,
+		idCount: idCount
+	}
+	fs.writeFileSync("todo-list-data.json", JSON.stringify(todoListData, null, 2))	
   }	
