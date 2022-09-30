@@ -73,7 +73,7 @@ app.put('/api/list/:listId/item/:itemId', (req, res) => {
     let itemId:string = req.params.itemId
     let update:Partial<TodoItem> = { ...req.body }
     let update_n:number = updateItemOnList(listId, itemId, update) // updateItemOnList return the number of items updated
-    if (update_n == 0) {  // if list not exist, updateItemOnList return 0
+    if (update_n === 0) {  // if list not exist, updateItemOnList return 0
       res.status(404).json({ status: "error" }) // here return 404
       return
     }
@@ -81,33 +81,34 @@ app.put('/api/list/:listId/item/:itemId', (req, res) => {
       res.status(200).json({ status: 'ok' }) 
     }
 
+// Q6 Implement the DELETE /api/list/<<list ID>> 
+app.delete("/api/list/:listId/", (req, res) => {
+    let listId:string = req.params.listId 
+    let delete:Partial<TodoList> = { ...req.body }
+    let delete_n:number = deleteList(xx,xx) // will implement deleteList() in serverData
+    if (delete_n === 0) { // equal !list 
+      res.status(404).json({ status: "error" })
+      return
+    }
+    else {
+      res.status(200).json({ status: "ok" })
+    }
+  })
 
-
-    // Q6 Implement the DELETE /api/list/<<list ID>> 
-    app.delete("/list/:listId/", (req, res) => {
-      const list = lists[req.params.listId]
-      if (!list) {
-        res.status(404).json({ status: "error" })
-        return
-      }
-      //list.xxx() will call a new function 
+// Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
+app.delete("/list/:listId/item/:item", (req, res) => {
+    const list = lists[req.params.listId]
+    if (!list) {
+      res.status(404).json({ status: "error" })
+      return
+    }
+    if (!req.params.item) {
+      res.status(400).json({ status: "error" })
+      return
+    }
+         // list.xx() call a new function
       res.status(200).json({ status: "ok", count: list.size })
-    })
-
-    // Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
-    app.delete("/list/:listId/item/:item", (req, res) => {
-      const list = lists[req.params.listId]
-      if (!list) {
-        res.status(404).json({ status: "error" })
-        return
-      }
-      if (!req.params.item) {
-        res.status(400).json({ status: "error" })
-        return
-      }
-      // list.xx() call a new function
-      res.status(200).json({ status: "ok", count: list.size })
-    })
+  })
 
 
     // start server
