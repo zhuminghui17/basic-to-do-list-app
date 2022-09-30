@@ -28,7 +28,7 @@ let todoLists: TodoList[] = [
 
 let idCount = 0
 
-function nextId(): Id {
+export function nextId(): Id { // modify to export
 	return String(idCount++)
 }
 
@@ -73,6 +73,14 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
 	})
   return itemsUpdated
 }
+
+export function deleteList(listId: Id): number {
+	const list = getList(listId)
+	if (!list) {
+	  return 0
+	}
+	  
+  }
 
 export function load() {
 	todoLists = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8"))
