@@ -20,8 +20,8 @@ export interface TodoItem {
 }
 
 let todoLists: TodoList[] = [
-	{ name: "Homework", id: "x1", items: [] },
-	{ name: "Shopping", id: "x2", items: [{ id: "x3", description: "eggs", completed: false, priority: 2 }] },
+	 { name: "Homework", id: "x1", items: [] },
+	 { name: "Shopping", id: "x2", items: [{ id: "x3", description: "eggs", completed: false, priority: 2 }] },
 ]
 
 let idCount = 0
@@ -30,27 +30,14 @@ function nextId(): Id {
 	return String(idCount++)
 }
 
-// Q8-1
 export async function getLists(): Promise<TodoListBasicInfo[]> {
-	return fetch('/api/lists')
-	.then((res) => {
-		return res.json()
-	}).then((data: TodoListBasicInfo[]) => {
-		return data
-	})
+	return fetch('/api/lists').then((res) => res.json())
 }
 
-// Q8-2
-export async function getList(): Promise<TodoList | null> {
-	return fetch('/api/list/${encodeURIComponent(listId)}/items')
-	.then((res) => {
-		return res.json()
-	}).then((data: TodoList | null) => {
-		return data
-	})
+export async function getList(listId: Id): Promise<TodoList | null> {
+	return fetch(`/api/list/${listId}/items`).then((res) => res.json())
 }
 
-// Q8-3
 export async function addList(name: string): Promise<Id> {
 	const response = await fetch('/api/list', 
 		{
@@ -58,28 +45,23 @@ export async function addList(name: string): Promise<Id> {
 			headers: {"Content-Type": "application/json"},
 			body: JSON.stringify({name: name})
 			})
-
 			const data = await response.json()
 			return data.id
 }
 
 export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Promise<Id | null> {
-		const response = await fetch(
-		'api/list/${encodeURIComponent(listId)}/items', 
-		{
-			method: 'POST',
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				...item
-			})
-		})
-		
-		const data = await response.json()
-		return data.id
+	const response = await fetch('/api/list/${listId}/item', {
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify((
+			{...item}
+		)),
+		method: "POST"
+	})
+	const data = await response.json()
+	return data.id
 }
-
 
 export async function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoItem>): Promise<number> {
 		const response = await fetch(
@@ -96,18 +78,13 @@ export async function updateItemOnList(listId: Id, itemId: Id, update: Partial<T
 }
 
 export async function deleteList(listId:Id): Promise<number> {
-
 		const response = await fetch('api/list/${encodeURIComponent(listId)}',{method: "DELETE"})
-	
 		const data = await response.json()
 		return data.count
 }
 
 export async function deleteItemFromList(listId: Id, itemId: Id): Promise<number>{
-
-	const response = await fetch('/api/list/${encodeURIComponent(listId)}/item/${encodeURIComponent(itemId)}',{
-		method:"DELETE"
-	})
+	const response = await fetch('/api/list/${encodeURIComponent(listId)}/item/${encodeURIComponent(itemId)}',{method:"DELETE"})
 	const data = await response.json()
 	return data.count
 }
