@@ -2,7 +2,8 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
-import { Id, nextId, TodoItem, getLists, getList, addList, addItemToList, updateItemOnList,TodoList } from './serverData'
+import { Id, nextId, TodoItem, getLists, getList, addList, addItemToList, updateItemOnList, deleteList, 
+  deleteItemFromList, TodoList } from './serverData'
 
 // data managed by server
 type listName = string
@@ -80,6 +81,8 @@ app.put('/api/list/:listId/item/:itemId', (req, res) => {
     else {
       res.status(200).json({ status: 'ok' }) 
     }
+})
+
 
 // Q6 Implement the DELETE /api/list/<<list ID>> 
 app.delete("/api/list/:listId/", (req, res) => {
@@ -112,3 +115,4 @@ app.delete("/api/list/:listId/item/:item", (req, res) => {
 app.listen(port, () => {
       console.log(`To-do list server listening on port ${port}`)
     })
+

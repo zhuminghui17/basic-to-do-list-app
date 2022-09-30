@@ -75,12 +75,25 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
 }
 
 export function deleteList(listId: Id): number {
-	const list = getList(listId)
-	if (!list) {
+	const list_target = getList(listId)
+	if (!list_target) {
 	  return 0
+	} else {
+	todoLists = todoLists.filter(TodoList => TodoList !== list_target) // delete target list from todoLists
+	return 200 // success 	
 	}
-	  
   }
+
+  export function deleteItemFromList(listId: Id, itemId: Id): number {
+	const list_target = getList(listId)
+	if (!list_target) {
+	  return 0
+	} else {
+	list_target.items = list_target.items.filter(l => l.id !== itemId) // // delete item from list_target
+	// need to modify the todoList
+	return 200 // success 	
+	}
+  } 
 
 export function load() {
 	todoLists = JSON.parse(fs.readFileSync("todo-list-data.json").toString("utf-8"))
