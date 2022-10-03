@@ -95,19 +95,19 @@ app.delete("/api/list/:listId/", (req, res) => {
     }
   })
 
-// // Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
-// app.delete("/api/list/:listId/item/:item", (req, res) => {
-//     let listId:string = req.params.listId
-//     let itemId:string = req.params.itemId
-//     let delete_item_n:number = deleteItemFromList(listId, itemId) // will implement deleteItemFromList() in serverData
-//     if (delete_item_n === 0) {  // if list not exist, deleteItemFromList() return 0
-//       res.status(404).json({ status: "error" }) // here return 404
-//       return
-//     }
-//     else {
-//       res.status(200).json({ status: 'ok' }) 
-//     }
-// })    
+// Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
+app.delete("/api/list/:listId/item/:item", (req, res) => {
+    let listId:string = req.params.listId
+    let itemId:string = req.params.itemId
+    let delete_item_n:number = deleteItemFromList(listId, itemId) // will implement deleteItemFromList() in serverData
+    if (delete_item_n === 0) {  // if list not exist, deleteItemFromList() return 0
+      res.status(404).json({ status: "error" }) // here return 404
+      return
+    }
+    else {
+      res.status(200).json({ status: 'ok' }) 
+    }
+})    
 
 // start server
 app.listen(port, () => {
