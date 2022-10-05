@@ -67,8 +67,8 @@
                   </b-col>
                   <b-button variant="success" size="sm" @click="handleDeleteItem(selectedList.id,item.id)">Delete</b-button>
                 </b-row>
-                <b-badge variant="secondary">{{ item.priority }}</b-badge>
-                <b-button variant="success" @click="handleDeleteItem">Delete</b-button>
+                <!-- <b-badge variant="secondary">{{ item.priority }}</b-badge>
+                <b-button variant="success" @click="handleDeleteItem">Delete</b-button> -->
               </b-list-group-item>
               <b-list-group-item v-if="selectedList != null">
                 <b-input-group>
@@ -133,6 +133,7 @@ function refreshSelectedList() {
   })
 }
 
+
 function handleClickAddItem() {
   if (selectedList.value == null) {
     return
@@ -144,15 +145,20 @@ function handleClickAddItem() {
       priority: 3,
       completed: false,
     }
+  ).then(()=>{
+    descriptionOfItemToAdd.value = ""
+    refreshSelectedList()
+    refreshLists()
+      }
   )
-  descriptionOfItemToAdd.value = ""
-  refreshSelectedList()
-  refreshLists()
 }
 
 function checkItem(itemId: Id, completed: boolean) {
-  updateItemOnList(selectedList.value!.id, itemId, { completed })
-  refreshSelectedList()
+  updateItemOnList(selectedList.value!.id, itemId, { completed }).then(
+      () => {
+        refreshSelectedList()
+      }
+  )
 }
 
 function handleDeleteLists(listId: Id){
@@ -167,6 +173,7 @@ function handleDeleteLists(listId: Id){
 function handleDeleteItem(listId: Id,itemId:Id){
   deleteItemFromList(listId,itemId).then(()=>{
     refreshSelectedList()
+    refreshLists()
   })
 }
 </script>
