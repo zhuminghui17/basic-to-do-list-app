@@ -32,7 +32,7 @@ app.get("/api/list/:listId/items", (req, res) => { // get by a specific id
     res.status(404).json({ status: "error, listId does not exist." }) // return 404 and error
     return
   }
-  res.status(200).json(getList(req.params.listId).items) // success get the items
+  res.status(200).json(getList(req.params.listId)) // success get the items
 })
 
 // Q4-3
