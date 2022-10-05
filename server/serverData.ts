@@ -49,6 +49,7 @@ export function getList(listId: Id): TodoList | null {
 export function addList(name: string): Id {
 	const newList: TodoList = { id: nextId(), name, items: [] }
 	todoLists.push(newList)
+	save()
 	return newList.id
 }
 
@@ -59,6 +60,7 @@ export function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Id | null
   }
 	const id = nextId()
 	list.items?.push({ ...item, id })
+	save()
 	return id
 }
 
@@ -77,26 +79,19 @@ export function updateItemOnList(listId: Id, itemId: Id, update: Partial<TodoIte
 			return x // keep the same
 		}
 	})
+	save()
   return itemsUpdated // return a number
 }
 
 // for Q6
 export function deleteList(listId: Id): number {
-	// const list_target = getList(listId)
-	// if (!list_target) { // list_target
-	//   return 0
-	// } else {
-	// todoLists = todoLists.filter(TodoList => TodoList !== list_target) // delete target list from todoLists
-	// return 200 // successfully delete
-	// }
-	const list = getList(listId)
-	if (!list) {
-		return 0;
-	}
-	else{
-		let index:number = todoLists.indexOf(list);
-		todoLists.splice(index,1);
-		return 1;
+	const list_target = getList(listId)
+	if (!list_target) { // list_target
+	  return 0
+	} else {
+	todoLists = todoLists.filter(TodoList => TodoList !== list_target) // delete target list from todoLists
+	save()
+	return 200 // successfully delete
 	}
   }
   
@@ -108,8 +103,8 @@ export function deleteItemFromList(listId: Id, itemId: Id): number {
     return 0
   } else {
   list_target.items = list_target.items.filter(l => l.id !== itemId) // // delete item from list_target
-	// need to modify the todoList
-  return 200 // success 	
+	save()
+	return 200 // success 	
   }
 } 
 

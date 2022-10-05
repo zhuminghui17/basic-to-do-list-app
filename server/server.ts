@@ -51,7 +51,7 @@ app.post("/api/list/:listId/item", (req, res) => {
   // first validate types
   if (typeof req.body?.completed === "boolean" // follow instruction
       && typeof req.body?.description === "string"
-      && typeof req.body?.priority !== "number"){
+      && typeof req.body?.priority === "number"){
         let item:Omit<TodoItem, "id"> = {...req.body} // define item as type for addItemToList()
         let newId:string = addItemToList(req.params.listId, item)  // input Id and item
         if (newId === null) { // 
