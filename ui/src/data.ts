@@ -40,8 +40,7 @@ export async function getList(listId: Id): Promise<TodoList | null> {
 
 export async function addList(name: string): Promise<Id> {
 	const response = await fetch(`/api/list`, 
-		{
-			method: 'POST',
+		{	method: 'POST',
 			headers: {"Content-Type": "application/json"},
 			body: JSON.stringify({name: name})
 			})
@@ -51,6 +50,7 @@ export async function addList(name: string): Promise<Id> {
 
 export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Promise<Id | null> {
 	const response = await fetch(`/api/list/${encodeURIComponent(listId)}/item`, {
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
 		},
@@ -59,7 +59,6 @@ export async function addItemToList(listId: Id, item: Omit<TodoItem, "id">): Pro
 				priority: item.priority,
 				completed: item.completed}
 		)),
-		method: "POST"
 	})
 	const data = await response.json()
 	return data.id
