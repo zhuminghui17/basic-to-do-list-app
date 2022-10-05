@@ -96,7 +96,7 @@ app.delete("/api/list/:listId/", (req, res) => {
   })
 
 // Q7 Implement the DELETE /api/list/<<list ID>>/item/<<item ID>>
-app.delete("/api/list/:listId/item/:item", (req, res) => {
+app.delete("/api/list/:listId/item/:itemId", (req, res) => {
     let listId:string = req.params.listId
     let itemId:string = req.params.itemId
     let delete_item_n:number = deleteItemFromList(listId, itemId) // will implement deleteItemFromList() in serverData
