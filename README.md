@@ -1,4 +1,8 @@
-# Assignment 2: basic to-do list app
+# Basic To-do List App
+a basic to-do list app with a Vue.js frontend and an Express.js server backend.
+
+
+<!-- # Assignment 2: basic to-do list app
 
 Through this assignment, you will take a basic frontend-only to-do list Vue.js app and transform it so that the to-do list data is stored in an Express.js server backend and accessed from the frontend via a RESTful API.
 
@@ -14,4 +18,4 @@ Remember: your app will not run if you do not have two terminals open, one for r
 8. Update the exported functions in `ui/src/data.ts` so that they are `async` (NOTE: if the functions are changed to being `async`, does anything need to change in `App.vue`?) and instead use `fetch` to call the backend server API. Use `encodeURIComponent` to prevent injection attacks when constructing your URLs (see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent). Do not worry about error handling.**(done)**
 9. Implement a delete button for lists and wire it up to call a new function in `ui/src/data.ts` that calls the API from step 5. There should be one delete button per row on the left hand side. **(done)**
 10. Implement a delete button for list items and wire it up to call a new function in `ui/src/data.ts` that calls the API from step 6. There should be one delete button per row on the right hand side.**(done)**
-11. Make a short demo video demonstrating that your implementation correctly handles the scenario of deleting a to-do list item on the right hand side by having the badge showing the number of items in the corresponding list on the left hand side go down by one. Use Panopto and share the video with the instructor and the 4 course TAs/grader prior to the due date.**(done)**
+11. Make a short demo video demonstrating that your implementation correctly handles the scenario of deleting a to-do list item on the right hand side by having the badge showing the number of items in the corresponding list on the left hand side go down by one. Use Panopto and share the video with the instructor and the 4 course TAs/grader prior to the due date.**(done)** -->
